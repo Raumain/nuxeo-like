@@ -1,0 +1,26 @@
+services:
+  app:
+    image: oven/bun:latest
+    container_name: nuxeo
+    user: bun
+    working_dir: /app
+    volumes:
+      - .:/app
+    command: tail -f /dev/null
+    ports:
+      - "3000:3000"
+
+  db:
+    image: postgres:latest
+    container_name: nuxeo-db
+    environment:
+      POSTGRES_USER: nuxeo
+      POSTGRES_PASSWORD: nuxeo
+      POSTGRES_DB: nuxeo
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+volumes:
+  db_data:
