@@ -12,6 +12,15 @@ export async function up(db: Kysely<any>): Promise<void> {
 		.addColumn("version_number", "varchar", (col) => col.notNull())
 		.addColumn("file_url", "varchar", (col) => col)
 		.addColumn("data_snapshot", "jsonb", (col) => col.notNull())
+		.addColumn("created_by", "varchar(10)", (col) =>
+			col.references("users.id").onDelete("set null"),
+		)
+		.addColumn("updated_at", "timestamp", (col) =>
+			col.defaultTo(sql`now()`).notNull(),
+		)
+		.addColumn("updated_by", "varchar(10)", (col) =>
+			col.references("users.id").onDelete("set null"),
+		)
 		.addColumn("created_at", "timestamp", (col) =>
 			col.defaultTo(sql`now()`).notNull(),
 		)

@@ -24,9 +24,13 @@ export type JsonValue = JsonArray | JsonObject | JsonPrimitive;
 export type Timestamp = ColumnType<Date, Date | string, Date | string>;
 
 export interface DocumentMetadata {
+  createdAt: Generated<Timestamp>;
+  createdBy: string | null;
   data: Json;
   documentId: string;
   id: Generated<string>;
+  updatedAt: Generated<Timestamp>;
+  updatedBy: string | null;
 }
 
 export interface Documents {
@@ -40,27 +44,35 @@ export interface Documents {
   title: string;
   typeId: string;
   updatedAt: Generated<Timestamp>;
+  updatedBy: string | null;
 }
 
 export interface DocumentTypes {
+  createdAt: Generated<Timestamp>;
+  createdBy: string | null;
   id: Generated<string>;
   isFolder: Generated<boolean>;
   name: string;
   schema: Json;
+  updatedAt: Generated<Timestamp>;
+  updatedBy: string | null;
 }
 
 export interface DocumentVersions {
   createdAt: Generated<Timestamp>;
+  createdBy: string | null;
   dataSnapshot: Json;
   documentId: string;
   fileUrl: string | null;
   id: Generated<string>;
+  updatedAt: Generated<Timestamp>;
+  updatedBy: string | null;
   versionNumber: string;
 }
 
 export interface Files {
   createdAt: Generated<Timestamp>;
-  createdBy: string;
+  createdBy: string | null;
   id: Generated<string>;
   name: string;
   path: string;
@@ -68,46 +80,50 @@ export interface Files {
   tags: Generated<Json | null>;
   type: string;
   updatedAt: Generated<Timestamp>;
-  updatedBy: string;
+  updatedBy: string | null;
   workspaceId: string;
 }
 
 export interface Groups {
   createdAt: Generated<Timestamp>;
-  createdBy: string;
+  createdBy: string | null;
   id: Generated<string>;
   name: string;
   updatedAt: Generated<Timestamp>;
-  updatedBy: string;
+  updatedBy: string | null;
 }
 
 export interface Permissions {
   accessType: string;
+  createdAt: Generated<Timestamp>;
+  createdBy: string | null;
   documentId: string;
   id: Generated<string>;
+  updatedAt: Generated<Timestamp>;
+  updatedBy: string | null;
   userId: string;
 }
 
 export interface Users {
   createdAt: Generated<Timestamp>;
-  createdBy: string;
+  createdBy: string | null;
   email: string;
   firstName: string;
   groups: string;
   id: string;
   lastName: string;
   updatedAt: Generated<Timestamp>;
-  updatedBy: string;
+  updatedBy: string | null;
 }
 
 export interface Workspaces {
   createdAt: Generated<Timestamp>;
-  createdBy: string;
+  createdBy: string | null;
   description: string | null;
   id: Generated<string>;
   name: string;
   updatedAt: Generated<Timestamp>;
-  updatedBy: string;
+  updatedBy: string | null;
 }
 
 export interface DB {

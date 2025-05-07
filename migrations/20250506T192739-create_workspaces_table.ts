@@ -8,10 +8,14 @@ export async function up(db: Kysely<any>): Promise<void> {
 		)
 		.addColumn("name", "varchar", (col) => col.notNull().unique())
 		.addColumn("description", "varchar", (col) => col)
-		.addColumn("updated_by", "varchar(100)", (col) => col.notNull())
-		.addColumn("created_by", "varchar(100)", (col) => col.notNull())
+		.addColumn("created_by", "varchar(10)", (col) =>
+			col.references("users.id").onDelete("set null"),
+		)
 		.addColumn("updated_at", "timestamp", (col) =>
 			col.defaultTo(sql`now()`).notNull(),
+		)
+		.addColumn("updated_by", "varchar(10)", (col) =>
+			col.references("users.id").onDelete("set null"),
 		)
 		.addColumn("created_at", "timestamp", (col) =>
 			col.defaultTo(sql`now()`).notNull(),

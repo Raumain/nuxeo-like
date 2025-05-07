@@ -9,6 +9,18 @@ export async function up(db: Kysely<any>): Promise<void> {
 		.addColumn("name", "varchar", (col) => col.notNull().unique())
 		.addColumn("schema", "jsonb", (col) => col.notNull())
 		.addColumn("is_folder", "boolean", (col) => col.defaultTo(false).notNull())
+		.addColumn("created_by", "varchar(10)", (col) =>
+			col.references("users.id").onDelete("set null"),
+		)
+		.addColumn("updated_at", "timestamp", (col) =>
+			col.defaultTo(sql`now()`).notNull(),
+		)
+		.addColumn("updated_by", "varchar(10)", (col) =>
+			col.references("users.id").onDelete("set null"),
+		)
+		.addColumn("created_at", "timestamp", (col) =>
+			col.defaultTo(sql`now()`).notNull(),
+		)
 		.execute();
 }
 
