@@ -1,30 +1,30 @@
-import type { Static } from "@sinclair/typebox";
-import { Elysia, file, form, t } from "elysia";
-import { documentBase, documentCreate } from "../../schemas/documents";
+import { Elysia, t } from "elysia";
+import { documentsBase, documentsCreate } from "../../schemas/documents";
 import {
-	createDocument,
-	deleteDocument,
+	createDocuments,
+	deleteDocuments,
 	getAllDocuments,
-	getDocumentById,
-	updateDocument,
+	getDocumentsById,
+	updateDocuments,
 } from "./repository";
 
-const documentRouter = new Elysia({ prefix: "/documents" })
+
+const documentsRouter = new Elysia({ prefix: "/documents" })
 	.get(
 		"/",
-		async ({ error }) => {
+		async ({ status }) => {
 			try {
 				const documents = await getAllDocuments();
 				return { documents };
-			} catch (err) {
-				console.error("Error fetching documents:", err);
-				return error(500, { error: "Failed to fetch documents" });
+			} catch (error) {
+				console.error("Error fetching documents:", error);
+				return status(500, { error: "Failed to fetch documents" });
 			}
 		},
 		{
 			response: {
 				200: t.Object({
-					documents: t.Array(documentBase),
+					documents: t.Array(documentsBase),
 				}),
 				500: t.Object({
 					error: t.String(),
@@ -34,22 +34,18 @@ const documentRouter = new Elysia({ prefix: "/documents" })
 	)
 	.get(
 		"/:id",
-		async ({ params, error }) => {
+		async ({ params, status }) => {
 			try {
-				const document = await getDocumentById(params.id);
+				const documents = await getDocumentsById(params.id);
 
-				if (!document) {
-					return error(404, { error: "document not found" });
+				if (!documents) {
+					return status(404, { error: "documents not found" });
 				}
 
-        // const file = Bun.file(document.path);
-
-				return form({ document, file: file(document.path) });
-			} catch (err) {
-				console.error("Error fetching document:", err);
-				return error(500, {
-					error: "Failed to fetch document",
-				});
+				return { documents };
+			} catch (error) {
+				console.error("Error fetching documents:", error);
+				return status(500, { error: "Failed to fetch documents" });
 			}
 		},
 		{
@@ -57,10 +53,9 @@ const documentRouter = new Elysia({ prefix: "/documents" })
 				id: t.String(),
 			}),
 			response: {
-				// 200: t.Object({
-				// 	document: documentBase,
-        //   file: t.File(),
-				// }),
+				200: t.Object({
+					documents: documentsBase,
+				}),
 				404: t.Object({
 					error: t.String(),
 				}),
@@ -72,40 +67,27 @@ const documentRouter = new Elysia({ prefix: "/documents" })
 	)
 	.post(
 		"/",
-		async ({ body }) => {
+		async ({ body, status }) => {
 			try {
-				const file = body.file;
-				const { name, size, type } = file;
-				const path = `uploads/${file.name}`;
-				const bytes = await Bun.write(path, file);
-				if (!bytes) {
-					throw new Error("Failed to write file");
-				}
-				const document = await createDocument({
-					name,
-					size,
-					path,
-					type,
-				});
-				if (!document) {
-					return { error: "document not created" };
+				const documents = await createDocuments(body);
+
+				if (!documents) {
+					return status(409, { error: "documents not created" });
 				}
 
-				return { id: document.id };
+				return { id: documents.id };
 			} catch (error) {
-				console.error("Error creating document:", error);
-				return { error: "Failed to create document" };
+				console.error("Error creating documents:", error);
+				return status(500, { error: "Failed to create documents" });
 			}
 		},
 		{
-			body: t.Object({
-				file: t.File(),
-			}),
+			body: documentsCreate,
 			response: {
 				200: t.Object({
 					id: t.String(),
 				}),
-				400: t.Object({
+				409: t.Object({
 					error: t.String(),
 				}),
 				500: t.Object({
@@ -116,30 +98,27 @@ const documentRouter = new Elysia({ prefix: "/documents" })
 	)
 	.put(
 		"/:id",
-		async ({ params, body }) => {
+		async ({ params, body, status }) => {
 			try {
-				const document = await updateDocument(params.id, body);
-				if (!document) {
-					return { error: "document not found" };
+				const documents = await updateDocuments(params.id, body);
+				if (!documents) {
+					return status(404, { error: "documents not found" });
 				}
 
-				return { id: document.id };
+				return { id: documents.id };
 			} catch (error) {
-				console.error("Error updating document:", error);
-				return { error: "Failed to update document" };
+				console.error("Error updating documents:", error);
+				return status(500, { error: "Failed to update documents" });
 			}
 		},
 		{
 			params: t.Object({
 				id: t.String(),
 			}),
-			body: t.Partial(documentBase),
+			body: t.Partial(documentsBase),
 			response: {
 				200: t.Object({
 					id: t.String(),
-				}),
-				400: t.Object({
-					error: t.String(),
 				}),
 				404: t.Object({
 					error: t.String(),
@@ -152,17 +131,17 @@ const documentRouter = new Elysia({ prefix: "/documents" })
 	)
 	.delete(
 		"/:id",
-		async ({ params }) => {
+		async ({ params, status }) => {
 			try {
-				const document = await deleteDocument(params.id);
-				if (!document) {
-					return { error: "document not found" };
+				const documents = await deleteDocuments(params.id);
+				if (!documents) {
+					return status(404, { error: "documents not found" });
 				}
 
-				return { id: document.id };
+				return { id: documents.id };
 			} catch (error) {
-				console.error("Error deleting document:", error);
-				return { error: "Failed to delete document" };
+				console.error("Error deleting documents:", error);
+				return status(500, { error: "Failed to delete documents" });
 			}
 		},
 		{
@@ -172,9 +151,6 @@ const documentRouter = new Elysia({ prefix: "/documents" })
 			response: {
 				200: t.Object({
 					id: t.String(),
-				}),
-				400: t.Object({
-					error: t.String(),
 				}),
 				404: t.Object({
 					error: t.String(),
@@ -186,4 +162,4 @@ const documentRouter = new Elysia({ prefix: "/documents" })
 		},
 	);
 
-export default documentRouter;
+export default documentsRouter;

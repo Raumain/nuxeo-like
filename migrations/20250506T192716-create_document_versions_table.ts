@@ -1,0 +1,23 @@
+import { type Kysely, sql } from "kysely";
+
+export async function up(db: Kysely<any>): Promise<void> {
+	await db.schema
+		.createTable("document_versions")
+		.addColumn("id", "uuid", (col) =>
+			col.primaryKey().defaultTo(sql`gen_random_uuid()`),
+		)
+		.addColumn("document_id", "uuid", (col) =>
+			col.references("documents.id").onDelete("cascade").notNull(),
+		)
+		.addColumn("version_number", "varchar", (col) => col.notNull())
+		.addColumn("file_url", "varchar", (col) => col)
+		.addColumn("data_snapshot", "jsonb", (col) => col.notNull())
+		.addColumn("created_at", "timestamp", (col) =>
+			col.defaultTo(sql`now()`).notNull(),
+		)
+		.execute();
+}
+
+export async function down(db: Kysely<any>): Promise<void> {
+	await db.schema.dropTable("document_versions").execute();
+}

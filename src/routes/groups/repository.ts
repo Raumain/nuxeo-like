@@ -1,19 +1,19 @@
 import type { Static } from "@sinclair/typebox";
 import { db } from "../../db";
 import type {
-	documentsBase,
-	documentsCreate,
-} from "../../schemas/documents";
+	groupsBase,
+	groupsCreate,
+} from "../../schemas/groups";
 
-export const getAllDocuments = async () => {
-	const data = await db.selectFrom("documents").selectAll().execute();
+export const getAllGroups = async () => {
+	const data = await db.selectFrom("groups").selectAll().execute();
 
 	return data;
 };
 
-export const getDocumentsById = async (id: string) => {
+export const getGroupsById = async (id: string) => {
 	const data = await db
-		.selectFrom("documents")
+		.selectFrom("groups")
 		.selectAll()
 		.where("id", "=", id)
 		.executeTakeFirst();
@@ -21,11 +21,11 @@ export const getDocumentsById = async (id: string) => {
 	return data;
 };
 
-export const createDocuments = async (
-	body: Static<typeof documentsCreate>,
+export const createGroups = async (
+	body: Static<typeof groupsCreate>,
 ) => {
 	const data = await db
-		.insertInto("documents")
+		.insertInto("groups")
 		.values(body)
 		.returning("id")
 		.executeTakeFirst();
@@ -33,12 +33,12 @@ export const createDocuments = async (
 	return data;
 };
 
-export const updateDocuments = async (
+export const updateGroups = async (
 	id: string,
-	body: Partial<Static<typeof documentsBase>>,
+	body: Partial<Static<typeof groupsBase>>,
 ) => {
 	const data = await db
-		.updateTable("documents")
+		.updateTable("groups")
 		.set(body)
 		.where("id", "=", id)
 		.returning("id")
@@ -47,9 +47,9 @@ export const updateDocuments = async (
 	return data;
 };
 
-export const deleteDocuments = async (id: string) => {
+export const deleteGroups = async (id: string) => {
 	const data = await db
-		.deleteFrom("documents")
+		.deleteFrom("groups")
 		.where("id", "=", id)
 		.returning("id")
 		.executeTakeFirst();
