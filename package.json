@@ -1,0 +1,22 @@
+{
+  "name": "app",
+  "version": "1.0.50",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "codegen": "bunx kysely-codegen --out-file ./src/types/dbTypes.ts --camel-case",
+    "migrate": "sh ./scripts/migrate.sh",
+    "dev": "bun run --watch src/index.ts"
+  },
+  "dependencies": {
+    "elysia": "latest",
+    "kysely": "^0.28.0",
+    "kysely-codegen": "^0.18.3",
+    "kysely-migration-cli": "^0.4.2",
+    "pg": "^8.14.1"
+  },
+  "devDependencies": {
+    "@types/pg": "^8.11.13",
+    "bun-types": "latest"
+  },
+  "module": "src/index.js"
+}

@@ -1,0 +1,32 @@
+networks:
+  bun_network:
+    external: true
+
+services:
+  app:
+    image: oven/bun:latest
+    user: bun
+    working_dir: /app
+    volumes:
+      - .:/app
+    command: tail -f /dev/null
+    ports:
+      - "3000:3000"
+    networks:
+      - bun_network
+
+  db:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: nuxeo
+      POSTGRES_PASSWORD: nuxeo
+      POSTGRES_DB: nuxeo
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - bun_network
+
+volumes:
+  db_data:
